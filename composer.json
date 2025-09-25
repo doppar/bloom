@@ -1,0 +1,38 @@
+{
+  "name": "doppar/bloom",
+  "description": "Doppar Bloom is a modern, feature-rich HTTP client package for PHP",
+  "type": "library",
+  "license": "MIT",
+  "support": {
+    "issues": "https://github.com/doppar/bloom/issues",
+    "source": "https://github.com/doppar/bloom"
+  },
+  "authors": [
+    {
+      "name": "Mahedi Hasan",
+      "email": "mahedi@doppar.com"
+    }
+  ],
+  "require-dev": {
+    "mockery/mockery": "^1.6",
+    "phpunit/phpunit": "^11.5.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "Doppar\\Bloom\\": "src/"
+    }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.x-dev"
+    }
+  },
+  "scripts": {
+    "post-install-cmd": []
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}

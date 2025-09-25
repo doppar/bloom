@@ -1,0 +1,104 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Doppar\Bloom;
+
+use Doppar\Bloom\Contracts\{Persister};
+use Doppar\Bloom\Factories\HasherFactory;
+use Doppar\Bloom\Factories\PersisterFactory;
+use Doppar\Bloom\Utils\KeySpecificConfig;
+use Doppar\Bloom\Utils\Indexer;
+
+final class BloomManager
+{
+    /**
+     * @var KeySpecificConfig
+     */
+    private $bloomConfig;
+
+    /**
+     * @var PersisterFactory
+     */
+    private $persisterFactory;
+
+    /**
+     * @var HasherFactory
+     */
+    private $hasherFactory;
+
+    /**
+     * BloomManager constructor.
+     * @param PersisterFactory $persisterFactory
+     * @param HasherFactory $hasherFactory
+     */
+    public function __construct(
+        PersisterFactory $persisterFactory,
+        HasherFactory $hasherFactory
+    ) {
+        $this->bloomConfig = config('bloom');
+        $this->persisterFactory = $persisterFactory;
+        $this->hasherFactory = $hasherFactory;
+    }
+
+    /**
+     * @param string $key
+     * @param string|null $keySuffix
+     * @return BloomFilter
+     * @throws Exceptions\InvalidBloomFilterHashFunctionsNumber
+     * @throws Exceptions\InvalidBloomFilterSize
+     */
+    public function key(string $key, ?string $keySuffix = null): BloomFilter
+    {
+        $keySpecificConfig = KeySpecificConfig::of($key, $this->bloomConfig);
+
+        $indexer = $this->resolveIndexer($keySpecificConfig);
+        $persister = $this->resolvePersister($keySpecificConfig);
+
+        return $this->resolveBloomFilter($key, $keySuffix, $keySpecificConfig, $indexer, $persister);
+    }
+
+    /**
+     * @param string $key
+     * @param string|null $keySuffix
+     * @param KeySpecificConfig $keySpecificConfig
+     * @param Indexer $indexer
+     * @param Persister $persister
+     * @return BloomFilter
+     */
+    private function resolveBloomFilter(
+        string $key,
+        ?string $keySuffix,
+        KeySpecificConfig $keySpecificConfig,
+        Indexer $indexer,
+        Persister $persister
+    ): BloomFilter {
+        $key = $keySuffix ? $key . strval($keySuffix) : $key;
+
+        return new BloomFilter($key, $keySpecificConfig, $indexer, $persister);
+    }
+
+    /**
+     * @param KeySpecificConfig $config
+     * @return Indexer
+     */
+    private function resolveIndexer(KeySpecificConfig $config): Indexer
+    {
+        return new Indexer(
+            $this->hasherFactory->make($config->getHashingAlgorithm())
+        );
+    }
+
+    /**
+     * @param KeySpecificConfig $config
+     * @return Persister
+     */
+    private function resolvePersister(KeySpecificConfig $config): Persister
+    {
+        return $this->persisterFactory->make(
+            $config->getPersistenceDriver(),
+            $config->getPersistenceConnection(),
+            $config->getSize()
+        );
+    }
+}
