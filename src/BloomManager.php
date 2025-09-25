@@ -13,40 +13,46 @@ use Doppar\Bloom\Utils\Indexer;
 final class BloomManager
 {
     /**
+     * Bloom filter configuration, possibly loaded from app config.
+     *
      * @var KeySpecificConfig
      */
     private $bloomConfig;
 
     /**
+     * Factory for creating persistence drivers (e.g., Redis).
+     *
      * @var PersisterFactory
      */
-    private $persisterFactory;
+    private PersisterFactory $persisterFactory;
 
     /**
+     * Factory for creating hashers (e.g., MD5, Murmur).
+     *
      * @var HasherFactory
      */
-    private $hasherFactory;
+    private HasherFactory $hasherFactory;
 
     /**
      * BloomManager constructor.
-     * @param PersisterFactory $persisterFactory
-     * @param HasherFactory $hasherFactory
+     *
+     * @param PersisterFactory $persisterFactory Factory for persisters.
+     * @param HasherFactory $hasherFactory Factory for hashers.
      */
-    public function __construct(
-        PersisterFactory $persisterFactory,
-        HasherFactory $hasherFactory
-    ) {
+    public function __construct(PersisterFactory $persisterFactory, HasherFactory $hasherFactory)
+    {
         $this->bloomConfig = config('bloom');
         $this->persisterFactory = $persisterFactory;
         $this->hasherFactory = $hasherFactory;
     }
 
     /**
+     * Create a BloomFilter instance bound to a specific key.
+     *
      * @param string $key
      * @param string|null $keySuffix
      * @return BloomFilter
-     * @throws Exceptions\InvalidBloomFilterHashFunctionsNumber
-     * @throws Exceptions\InvalidBloomFilterSize
+     * @throws \Doppar\Bloom\Exceptions\InvalidBloomFilterSize
      */
     public function key(string $key, ?string $keySuffix = null): BloomFilter
     {
@@ -59,6 +65,8 @@ final class BloomManager
     }
 
     /**
+     * Build a BloomFilter instance with the given components.
+     *
      * @param string $key
      * @param string|null $keySuffix
      * @param KeySpecificConfig $keySpecificConfig
@@ -79,26 +87,30 @@ final class BloomManager
     }
 
     /**
+     * Resolve the Indexer, which maps values to bit positions
+     *
      * @param KeySpecificConfig $config
      * @return Indexer
      */
     private function resolveIndexer(KeySpecificConfig $config): Indexer
     {
         return new Indexer(
-            $this->hasherFactory->make($config->getHashingAlgorithm())
+            hasher: $this->hasherFactory->make($config->getHashingAlgorithm())
         );
     }
 
     /**
+     * Resolve the Persister, which manages storing bits
+     *
      * @param KeySpecificConfig $config
      * @return Persister
      */
     private function resolvePersister(KeySpecificConfig $config): Persister
     {
         return $this->persisterFactory->make(
-            $config->getPersistenceDriver(),
-            $config->getPersistenceConnection(),
-            $config->getSize()
+            driver: $config->getPersistenceDriver(),
+            connection: $config->getPersistenceConnection(),
+            capacity: $config->getSize()
         );
     }
 }

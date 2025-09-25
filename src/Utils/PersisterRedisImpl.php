@@ -37,8 +37,11 @@ final class PersisterRedisImpl implements Persister
     }
 
     /**
+     * Set bits
+     *
      * @param string $key
      * @param Indexes $indexes
+     * @return void
      */
     public function setBits(string $key, Indexes $indexes): void
     {
@@ -52,6 +55,8 @@ final class PersisterRedisImpl implements Persister
     }
 
     /**
+     * Get bits
+     *
      * @param string $key
      * @param Indexes $indexes
      * @return Bits
@@ -70,7 +75,10 @@ final class PersisterRedisImpl implements Persister
     }
 
     /**
+     * Clear redis key
+     *
      * @param string $key
+     * @return void
      */
     public function clear(string $key): void
     {

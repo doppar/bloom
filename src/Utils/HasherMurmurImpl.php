@@ -10,9 +10,15 @@ use Doppar\Bloom\Contracts\Hasher;
 class HasherMurmurImpl implements Hasher
 {
     /**
-     * @param int $seed
-     * @param string $value
-     * @return int
+     * Generate a hash value using MurmurHash3 algorithm.
+     *
+     * Steps:
+     * 1. Build input string as "{seed}__{value}".
+     * 2. Apply MurmurHash3 to get an integer result.
+     *
+     * @param int $seed  Seed value to diversify hashes.
+     * @param string $value Input string to hash.
+     * @return int Integer hash value.
      */
     public function hash(int $seed, string $value): int
     {

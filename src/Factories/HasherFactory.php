@@ -11,24 +11,19 @@ use Doppar\Bloom\Exceptions\UnsupportedHashingAlgorithm;
 
 class HasherFactory
 {
-    const MD5_HASH_ALGORITHM = 'md5';
-
-    const MURMUR_HASH_ALGORITHM = 'murmur';
-
     /**
-     * @param $algorithm
+     * Create a Hasher implementation based on the given algorithm name.
+     *
+     * @param string $algorithm
      * @return Hasher
      * @throws UnsupportedHashingAlgorithm
      */
     public function make(string $algorithm): Hasher
     {
-        switch (strtolower($algorithm)) {
-            case self::MD5_HASH_ALGORITHM:
-                return new HasherMD5Impl();
-            case self::MURMUR_HASH_ALGORITHM:
-                return new HasherMurmurImpl();
-            default:
-                throw new UnsupportedHashingAlgorithm($algorithm, 1);
-        }
+        return match (strtolower($algorithm)) {
+            'md5' => new HasherMD5Impl(),
+            'murmur' => new HasherMurmurImpl(),
+            default => throw new UnsupportedHashingAlgorithm($algorithm, 1),
+        };
     }
 }

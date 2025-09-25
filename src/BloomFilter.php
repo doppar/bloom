@@ -38,12 +38,8 @@ final class BloomFilter
      * @param Indexer $indexer
      * @param Persister $persister
      */
-    public function __construct(
-        string $key,
-        KeySpecificConfig $config,
-        Indexer $indexer,
-        Persister $persister,
-    ) {
+    public function __construct(string $key, KeySpecificConfig $config, Indexer $indexer, Persister $persister)
+    {
         $this->config = $config;
         $this->indexer = $indexer;
         $this->persister = $persister;
@@ -51,7 +47,10 @@ final class BloomFilter
     }
 
     /**
+     * Add items to bloom
+     *
      * @param string|integer|float $item
+     * @return void
      */
     public function add($item): void
     {
@@ -73,6 +72,8 @@ final class BloomFilter
     }
 
     /**
+     * Check the item exixts or not
+     *
      * @param string|integer|float $item
      * @return bool
      */

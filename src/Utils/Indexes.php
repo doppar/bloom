@@ -38,9 +38,9 @@ class Indexes implements Countable
     /**
      * Get an iterator for all stored indexes.
      *
-     * @return iterable<int> Generator that yields each index
+     * @return iterable<int>
      */
-    public function get(): iterable
+    public function get(): \Generator
     {
         foreach ($this->indexes as $index) {
             yield $index;

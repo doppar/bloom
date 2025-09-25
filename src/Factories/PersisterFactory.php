@@ -10,6 +10,8 @@ use Doppar\Bloom\Utils\PersisterRedisImpl;
 class PersisterFactory
 {
     /**
+     * Create a Hasher implementation based on the given algorithm name.
+     *
      * @param string $driver
      * @param string $connection
      * @param int $capacity

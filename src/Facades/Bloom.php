@@ -9,7 +9,7 @@ use Phaseolies\Facade\BaseFacade;
  * Class Bloom
  * @package Doppar\Bloom\Facades
  *
- * @method static BloomFilter key(string $key, ?string $keySuffix = null)
+ * @method static BloomFilter key(string $key, ?string $keySuffix = null): BloomFilter
  */
 class Bloom extends BaseFacade
 {

@@ -7,7 +7,9 @@ namespace Doppar\Bloom\Utils;
 class Bits
 {
     /**
-     * @var array
+     * Array of bit values retrieved from persistence layer
+     *
+     * @var array<int> Array of integers (0 or 1) representing bit states
      */
     private $values;
 
@@ -20,6 +22,11 @@ class Bits
         $this->values = $values;
     }
 
+    /**
+     * Test if all bit positions are set (indicating probable membership)
+     *
+     * @return bool
+     */
     public function test(): bool
     {
         if (empty($this->values)) {
