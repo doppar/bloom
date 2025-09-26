@@ -82,7 +82,7 @@ final class PersisterRedisImpl implements Persister
      */
     public function clear(string $key): void
     {
-        $this->redis->del([$key]);
+        $this->redis->del($key);
     }
 
     /**
