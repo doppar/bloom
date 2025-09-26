@@ -13,7 +13,7 @@
 
 ## Doppar Bloom Filter - High-Performance Probabilistic Data Structure
 
-Doppar Bloom Filter is a sophisticated, production-ready implementation of Bloom filters - space-efficient probabilistic data structures that test whether an element is a member of a set. Perfect for large-scale applications where memory efficiency and fast membership testing are critical.
+Doppar Bloom Filter is a sophisticated, production-ready implementation of Bloom filters - space-efficient probabilistic data structures that test whether an element is a member of a set. Perfect for large-scale applications where memory efficiency and fast membership testing are critical. This library is an extended version of the `denismitr/laravel-bloom` package, adjusted for the Doppar framework.
 
 ## Documentation
 Read the documentation from doppar official site [Doppar Bloom](https://doppar.com/versions/3.x/doppar-bloom.html)

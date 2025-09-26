@@ -12,20 +12,28 @@ use Doppar\Bloom\Utils\Indexer;
 final class BloomFilter
 {
     /**
-     * @var Hasher
+     * Responsible for hashing items into bit indexes.
+     *
+     * @var Hasher|Indexer
      */
     private $indexer;
 
     /**
+     * Handles storing and retrieving the bits (e.g., Redis).
+     *
      * @var Persister
      */
     private $persister;
 
     /**
+     * Holds config (number of hashes, size of bit array).
+     *
      * @var KeySpecificConfig
      */
     private $config;
     /**
+     * filter key (used to identify a specific filter in storage).
+     *
      * @var string
      */
     private $key;
@@ -47,19 +55,13 @@ final class BloomFilter
     }
 
     /**
-     * Add items to bloom
+     * Add an item to the Bloom filter
      *
      * @param string|integer|float $item
      * @return void
      */
     public function add($item): void
     {
-        if (!is_numeric($item) && !is_string($item)) {
-            throw new \InvalidArgumentException(
-                "Bloom filter items must be string or numeric, got " . gettype($item)
-            );
-        }
-
         $this->verifyItem($item);
 
         $indexes = $this->indexer->getIndexes(
@@ -72,7 +74,7 @@ final class BloomFilter
     }
 
     /**
-     * Check the item exixts or not
+     * Check if an item may exist in the Bloom filter
      *
      * @param string|integer|float $item
      * @return bool
@@ -90,12 +92,19 @@ final class BloomFilter
         return $this->persister->getBits($this->key, $indexes)->test();
     }
 
+    /**
+     * Clear all bits for this Bloom filter (reset it).
+     *
+     * @return void
+     */
     public function clear(): void
     {
         $this->persister->clear($this->key);
     }
 
     /**
+     * Get number of hash functions used.
+     *
      * @return int
      */
     public function getNumHashes(): int
@@ -104,6 +113,8 @@ final class BloomFilter
     }
 
     /**
+     * Get the size of the Bloom filter bit array.
+     *
      * @return int
      */
     public function getSize(): int
@@ -112,11 +123,17 @@ final class BloomFilter
     }
 
     /**
+     * Validate item type.
+     *
      * @param $item
+     * @return void
      */
     private function verifyItem($item): void
     {
         if (!is_numeric($item) && !is_string($item)) {
+            throw new \InvalidArgumentException(
+                "Bloom filter items must be string or numeric, got " . gettype($item)
+            );
         }
     }
 }
