@@ -10,12 +10,12 @@
     "authors": [
         {
             "name": "Mahedi Hasan",
-            "email": "mahedi@doppar.com"
+            "email": "mahedy150101@gmail.com"
         }
     ],
     "require-dev": {
         "mockery/mockery": "^1.6",
-        "phpunit/phpunit": "^11.5.3"
+        "phpunit/phpunit": "^12.1.5"
     },
     "autoload": {
         "psr-4": {
@@ -27,12 +27,9 @@
             "dev-master": "1.x-dev"
         }
     },
-    "scripts": {
-        "post-install-cmd": []
-    },
     "config": {
         "sort-packages": true
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "prefer-stable": true
 }
