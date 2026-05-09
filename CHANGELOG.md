@@ -1,5 +1,13 @@
 # Release Notes
 
+## v1.0.6 - 2026-05-09
+
+### What's Changed
+
+* Made BloomServiceProvider Ghostable by [@techmahedy](https://github.com/techmahedy) in https://github.com/doppar/bloom/pull/2
+
+**Full Changelog**: https://github.com/doppar/bloom/compare/v1.0.5...v1.0.6
+
 ## v1.0.5 - 2025-11-23
 
 ### What's Changed
