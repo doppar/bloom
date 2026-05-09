@@ -4,9 +4,10 @@ namespace Doppar\Bloom;
 
 use Doppar\Bloom\Factories\HasherFactory;
 use Doppar\Bloom\Factories\PersisterFactory;
+use Phaseolies\Providers\GhostableProvider;
 use Phaseolies\Providers\ServiceProvider;
 
-class BloomServiceProvider extends ServiceProvider
+class BloomServiceProvider extends ServiceProvider implements GhostableProvider
 {
     /**
      * Register any application services.
@@ -38,5 +39,17 @@ class BloomServiceProvider extends ServiceProvider
             ],
             "config",
         );
+    }
+
+    /**
+     * Get the services that should ghost-load this provider.
+     *
+     * @return array<int, string>
+     */
+    public function ghosts(): array
+    {
+        return [
+            'bloom.manager',
+        ];
     }
 }
