@@ -4,10 +4,10 @@ namespace Doppar\Bloom;
 
 use Doppar\Bloom\Factories\HasherFactory;
 use Doppar\Bloom\Factories\PersisterFactory;
-use Phaseolies\Providers\GhostableProvider;
-use Phaseolies\Providers\ServiceProvider;
+use Phaseolies\Launchers\GhostableLauncher;
+use Phaseolies\Launchers\ServiceLauncher;
 
-class BloomServiceProvider extends ServiceProvider implements GhostableProvider
+class BloomLauncher extends ServiceLauncher implements GhostableLauncher
 {
     /**
      * Register any application services.
@@ -31,7 +31,7 @@ class BloomServiceProvider extends ServiceProvider implements GhostableProvider
      *
      * @return void
      */
-    public function boot(): void
+    public function launch(): void
     {
         $this->publishes(
             [
