@@ -7,6 +7,7 @@ namespace Doppar\Bloom\Tests\Unit;
 use Doppar\Bloom\Contracts\Hasher;
 use Doppar\Bloom\Utils\Indexer;
 use Doppar\Bloom\Utils\Indexes;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 
 class IndexerTest extends TestCase
@@ -18,6 +19,7 @@ class IndexerTest extends TestCase
         $this->hasherMock = $this->createMock(Hasher::class);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetIndexesReturnsCorrectNumberOfIndexes(): void
     {
         $this->hasherMock->method('hash')
@@ -52,6 +54,7 @@ class IndexerTest extends TestCase
         $indexer->getIndexes(3, 'test_value', 1000);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetIndexesWithDifferentSeedsProducesDifferentIndexes(): void
     {
         // Mock the hasher to return different values for different seeds
@@ -73,6 +76,7 @@ class IndexerTest extends TestCase
         $this->assertEquals($indexArray1, $indexArray2);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetIndexesWithDifferentValuesProducesDifferentIndexes(): void
     {
         $this->hasherMock->method('hash')
@@ -91,6 +95,7 @@ class IndexerTest extends TestCase
         $this->assertNotEquals($indexArray1, $indexArray2);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testIndexesAreWithinBounds(): void
     {
         $size = 100;
@@ -106,6 +111,7 @@ class IndexerTest extends TestCase
         }
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testIndexesAreModuloSize(): void
     {
         $size = 100;
