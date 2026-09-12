@@ -1,0 +1,103 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Call to an undefined method Doppar\\Bloom\\Contracts\\Hasher\|Doppar\\Bloom\\Utils\\Indexer\:\:getIndexes\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: src/BloomFilter.php
+
+		-
+			message: '#^Method Doppar\\Bloom\\BloomFilter\:\:verifyItem\(\) has parameter \$item with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/BloomFilter.php
+
+		-
+			message: '#^Parameter \#2 \$bloomConfig of static method Doppar\\Bloom\\Utils\\KeySpecificConfig\:\:of\(\) expects array, Doppar\\Bloom\\Utils\\KeySpecificConfig given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/BloomManager.php
+
+		-
+			message: '#^Call to an undefined static method Phaseolies\\Support\\Facades\\Cache\:\:getAdapter\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: src/Factories/PersisterFactory.php
+
+		-
+			message: '#^Method Doppar\\Bloom\\Utils\\Bits\:\:__construct\(\) has parameter \$values with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Utils/Bits.php
+
+		-
+			message: '#^PHPDoc tag @return with type iterable\<int\> is not subtype of native type Generator\.$#'
+			identifier: return.phpDocType
+			count: 1
+			path: src/Utils/Indexes.php
+
+		-
+			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Utils/KeySpecificConfig.php
+
+		-
+			message: '#^Call to function is_integer\(\) with int will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Utils/KeySpecificConfig.php
+
+		-
+			message: '#^Method Doppar\\Bloom\\Utils\\KeySpecificConfig\:\:of\(\) has parameter \$bloomConfig with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Utils/KeySpecificConfig.php
+
+		-
+			message: '#^Method Doppar\\Bloom\\Utils\\KeySpecificConfig\:\:validatedNumHashes\(\) has parameter \$num with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Utils/KeySpecificConfig.php
+
+		-
+			message: '#^PHPDoc tag @return with type int\|string is not subtype of native type int\.$#'
+			identifier: return.phpDocType
+			count: 2
+			path: src/Utils/KeySpecificConfig.php
+
+		-
+			message: '#^Static call to instance method Phaseolies\\Support\\Lens\:\:grab\(\)\.$#'
+			identifier: method.staticCall
+			count: 6
+			path: src/Utils/KeySpecificConfig.php
+
+		-
+			message: '#^Comparison operation "\>\=" between int\<0, 140737488355327\> and 0 is always true\.$#'
+			identifier: greaterOrEqual.alwaysTrue
+			count: 2
+			path: src/Utils/Murmur.php
+
+		-
+			message: '#^Comparison operation "\>\=" between int\<0, 4294967295\> and 0 is always true\.$#'
+			identifier: greaterOrEqual.alwaysTrue
+			count: 6
+			path: src/Utils/Murmur.php
+
+		-
+			message: '#^Comparison operation "\>\=" between int\<0, max\> and 0 is always true\.$#'
+			identifier: greaterOrEqual.alwaysTrue
+			count: 4
+			path: src/Utils/Murmur.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_values expects array, array\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Utils/Murmur.php
+
+		-
+			message: '#^Property Doppar\\Bloom\\Utils\\PersisterRedisImpl\:\:\$capacity is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: src/Utils/PersisterRedisImpl.php
