@@ -16,17 +16,17 @@
 Doppar Bloom Filter is a sophisticated, production-ready implementation of Bloom filters - space-efficient probabilistic data structures that test whether an element is a member of a set. Perfect for large-scale applications where memory efficiency and fast membership testing are critical. This library is an extended version of the `denismitr/laravel-bloom` package, adjusted for the Doppar framework.
 
 ## Documentation
-Read the documentation from doppar official site [Doppar Bloom](https://doppar.com/versions/3.x/doppar-bloom.html)
+Read the documentation from doppar official site [Doppar Bloom](https://doppar.com/versions/4.x/doppar-bloom)
 
 ---
 
 ## Contributing
 
-Thank you for considering contributing to the Doppar framework! The contribution guide can be found in the [Doppar documentation](https://doppar.com/versions/3.x/contributions.html).
+Thank you for considering contributing to the Doppar framework! The contribution guide can be found in the [Doppar documentation](https://doppar.com/versions/4.x/contributions).
 
 ## Code of Conduct
 
-In order to ensure that the Doppar community is welcoming to all, please review and abide by the [Code of Conduct](https://doppar.com/versions/3.x/contributions.html#code-of-conduct).
+In order to ensure that the Doppar community is welcoming to all, please review and abide by the [Code of Conduct](https://doppar.com/versions/4.x/contributions#code-of-conduct).
 
 ## Security Vulnerabilities
 
