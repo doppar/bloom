@@ -1,5 +1,13 @@
 # Release Notes
 
+## v4.1.0 - 2026-10-03
+
+### What's Changed
+
+* correctness, batching and production hardening by [@techmahedy](https://github.com/techmahedy) in https://github.com/doppar/bloom/pull/7
+
+**Full Changelog**: https://github.com/doppar/bloom/compare/4.0.0...v4.1.0
+
 ## 4.0.0 - 2026-09-16
 
 ### What's Changed
