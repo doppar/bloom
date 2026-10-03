@@ -27,6 +27,11 @@
             "Doppar\\Bloom\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Doppar\\Bloom\\Tests\\": "tests/"
+        }
+    },
     "extra": {
         "branch-alias": {
             "dev-master": "4.x-dev"

@@ -9,6 +9,7 @@ use Doppar\Bloom\Factories\HasherFactory;
 use Doppar\Bloom\Factories\PersisterFactory;
 use Doppar\Bloom\Utils\KeySpecificConfig;
 use Doppar\Bloom\Utils\Indexer;
+use Doppar\Bloom\Utils\Sizing;
 
 final class BloomManager
 {
@@ -65,6 +66,20 @@ final class BloomManager
     }
 
     /**
+     * Work out the size and number of hash functions for an expected load,
+     * ready to paste into a key's configuration.
+     *
+     * @param int $expectedItems
+     * @param float $falsePositiveRate e.g. 0.01 for 1%
+     * @return array{size: int, num_hashes: int}
+     * @throws \Doppar\Bloom\Exceptions\InvalidBloomFilterConfiguration
+     */
+    public function optimalConfig(int $expectedItems, float $falsePositiveRate): array
+    {
+        return Sizing::optimal($expectedItems, $falsePositiveRate);
+    }
+
+    /**
      * Build a BloomFilter instance with the given components.
      *
      * @param string $key
@@ -81,9 +96,11 @@ final class BloomManager
         Indexer $indexer,
         Persister $persister
     ): BloomFilter {
-        $key = $keySuffix ? $key . strval($keySuffix) : $key;
+        // "0" is a valid suffix, only null and an empty string mean "no suffix"
+        $storageKey = $keySpecificConfig->getPrefix() . $key
+            . ($keySuffix !== null && $keySuffix !== '' ? $keySuffix : '');
 
-        return new BloomFilter($key, $keySpecificConfig, $indexer, $persister);
+        return new BloomFilter($storageKey, $keySpecificConfig, $indexer, $persister);
     }
 
     /**
@@ -95,7 +112,8 @@ final class BloomManager
     private function resolveIndexer(KeySpecificConfig $config): Indexer
     {
         return new Indexer(
-            hasher: $this->hasherFactory->make($config->getHashingAlgorithm())
+            hasher: $this->hasherFactory->make($config->getHashingAlgorithm()),
+            strategy: $config->getIndexing(),
         );
     }
 

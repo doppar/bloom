@@ -9,17 +9,47 @@ use Doppar\Bloom\Contracts\Hasher;
 class Indexer
 {
     /**
+     * Original index calculation, kept as the default so filters that were
+     * persisted by earlier versions keep answering correctly.
+     *
+     * Hashes of 2^31 or more are doubled, which leaves half of them on even
+     * bit positions only and roughly doubles the false positive rate.
+     */
+    public const LEGACY = 'legacy';
+
+    /**
+     * Uniform index calculation: the 32-bit hash modulo the filter size.
+     * Use it for new filters.
+     */
+    public const V2 = 'v2';
+
+    /**
      * @var Hasher
      */
     private $hasher;
 
     /**
-     * Indexer constructor.s
-     * @param Hasher $hasher
+     * @var string
      */
-    public function __construct(Hasher $hasher)
+    private string $strategy;
+
+    /**
+     * Indexer constructor.
+     *
+     * @param Hasher $hasher
+     * @param string $strategy One of Indexer::LEGACY or Indexer::V2
+     * @throws \InvalidArgumentException
+     */
+    public function __construct(Hasher $hasher, string $strategy = self::LEGACY)
     {
+        if ($strategy !== self::LEGACY && $strategy !== self::V2) {
+            throw new \InvalidArgumentException(
+                "Unknown Bloom indexing strategy [{$strategy}]. Supported: legacy, v2."
+            );
+        }
+
         $this->hasher = $hasher;
+        $this->strategy = $strategy;
     }
 
     /**
@@ -51,6 +81,10 @@ class Indexer
     private function getIndex(int $seed, string $value, int $size): int
     {
         $hash = $this->hasher->hash($seed, $value);
+
+        if ($this->strategy === self::V2) {
+            return ($hash & 0xFFFFFFFF) % $size;
+        }
 
         // Strip the two's complement negative bit
         $bitIndex = $hash & (-1 >> 1);
