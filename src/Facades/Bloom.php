@@ -9,7 +9,8 @@ use Phaseolies\Facade\BaseFacade;
  * Class Bloom
  * @package Doppar\Bloom\Facades
  *
- * @method static BloomFilter key(string $key, ?string $keySuffix = null): BloomFilter
+ * @method static BloomFilter key(string $key, ?string $keySuffix = null)
+ * @method static array{size: int, num_hashes: int} optimalConfig(int $expectedItems, float $falsePositiveRate)
  */
 class Bloom extends BaseFacade
 {

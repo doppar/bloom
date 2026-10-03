@@ -94,12 +94,48 @@ return [
         |
         | Algorithm used to generate bit positions. Supported: 'md5', 'murmur'
         |
-        | - md5: Cryptographically secure, consistent across platforms
+        | - md5: Consistent across platforms (the hash is reduced to 32 bits, so
+        |   this is for bit placement only, not for security)
         | - murmur: Faster, non-cryptographic, better performance
         |
         */
 
         "hashing_algorithm" => "md5",
+
+        /*
+        |--------------------------------------------------------------------------
+        | Indexing Strategy
+        |--------------------------------------------------------------------------
+        |
+        | How a hash becomes a bit position.
+        |
+        | - legacy: the original calculation. Kept as the default because a
+        |   filter that already holds data must keep using the positions it was
+        |   written with, otherwise it would answer "not present" for items
+        |   that were added. It has a flaw: with an even size, about 75% of the
+        |   bits are used by half of the hashes, so the false positive rate is
+        |   roughly double what size and num_hashes predict.
+        | - v2: uniform positions, the false positive rate matches the maths.
+        |   Use it for every NEW filter. Never switch a filter that already
+        |   holds data: clear() it first and add its items again.
+        |
+        */
+
+        "indexing" => "legacy",
+
+        /*
+        |--------------------------------------------------------------------------
+        | Storage Key Prefix
+        |--------------------------------------------------------------------------
+        |
+        | Prepended to the Redis key of every filter, e.g. "bloom:". Without a
+        | prefix a filter named "users" shares its Redis key with anything else
+        | called "users", and clear() would delete it. Set it for new filters;
+        | changing it later points the filter at a different (empty) key.
+        |
+        */
+
+        "prefix" => "",
     ],
 
     /*
@@ -111,16 +147,17 @@ return [
     | Each key can override the default settings based on usage patterns
     | and performance requirements.
     |
+    | A key only needs the settings that differ from the defaults above.
+    | Bloom::optimalConfig(1_000_000, 0.01) returns a size and num_hashes for
+    | an expected number of items and false positive rate.
+    |
     | Example:
     |
     | 'user_recommendations' => [
     |     'size' => 5500000,
     |     'num_hashes' => 10,
-    |     'persistence' => [
-    |         'driver' => 'redis',
-    |         'connection' => 'default'
-    |     ],
-    |     'hashing_algorithm' => 'md5',
+    |     'indexing' => 'v2',
+    |     'prefix' => 'bloom:',
     | ]
     |
     */

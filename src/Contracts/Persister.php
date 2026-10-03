@@ -29,6 +29,33 @@ interface Persister
     public function getBits(string $key, Indexes $multi): Bits;
 
     /**
+     * Set the bits of many items in one round trip.
+     *
+     * @param string $key
+     * @param array<int, Indexes> $items One Indexes per item
+     * @return array<int, bool> Per item, in order: true when every bit was already set
+     *                          (the item was probably present before this call)
+     */
+    public function setBitsMany(string $key, array $items): array;
+
+    /**
+     * Read the bits of many items in one round trip.
+     *
+     * @param string $key
+     * @param array<int, Indexes> $items One Indexes per item
+     * @return array<int, Bits> One Bits per item, in order
+     */
+    public function getBitsMany(string $key, array $items): array;
+
+    /**
+     * Count the bits that are set.
+     *
+     * @param string $key
+     * @return int
+     */
+    public function countBits(string $key): int;
+
+    /**
      * Clear the bit array associated with the given key.
      *
      * @param string $key

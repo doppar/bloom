@@ -62,4 +62,18 @@ class HasherTest extends TestCase
 
         $this->assertNotEquals($hash1, $hash2);
     }
+
+    public function testNativeMurmurIsIdenticalToTheBundledPortableImplementation(): void
+    {
+        $hasher = new \Doppar\Bloom\Utils\HasherMurmurImpl();
+
+        foreach (['', 'a', 'ab', 'abc', 'abcd', 'abcde', 'user@example.com', str_repeat('x', 1000), "multi\u{1F600}byte", '0', '12345'] as $value) {
+            foreach ([1, 2, 5, 17] as $seed) {
+                $this->assertSame(
+                    \Doppar\Bloom\Utils\Murmur::hash3_int(sprintf('%d__%s', $seed, $value)),
+                    $hasher->hash($seed, $value),
+                );
+            }
+        }
+    }
 }

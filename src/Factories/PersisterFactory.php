@@ -7,13 +7,19 @@ namespace Doppar\Bloom\Factories;
 use Phaseolies\Support\Facades\Cache;
 use Doppar\Bloom\Utils\PersisterRedisImpl;
 use Doppar\Bloom\Contracts\Persister;
+use Doppar\Bloom\Exceptions\BloomPersistenceException;
 
 class PersisterFactory
 {
     /**
-     * Redis connection instances cache
+     * Seconds a connection is trusted before it is pinged again
+     */
+    private const HEALTH_CHECK_SECONDS = 5;
+
+    /**
+     * Redis connections already resolved, with the time they were last verified
      *
-     * @var array<string, \Redis>
+     * @var array<string, array{redis: \Redis, checked: int}>
      */
     private static array $redisInstances = [];
 
@@ -24,53 +30,89 @@ class PersisterFactory
      * @param string $connection
      * @param int $capacity
      * @return Persister
+     * @throws BloomPersistenceException
      */
     public function make(
         string $driver,
         string $connection,
         int $capacity,
     ): Persister {
-        try {
-            $redis = $this->getRedisConnection($connection);
-        } catch (\InvalidArgumentException $e) {
-            throw new \Exception($e->getMessage());
+        if (strtolower($driver) !== 'redis') {
+            throw new BloomPersistenceException(
+                "Unsupported Bloom persistence driver [{$driver}]. Supported drivers: redis."
+            );
         }
 
-        switch (strtolower($driver)) {
-            case config("bloom.default.persistence.driver"):
-                return new PersisterRedisImpl($redis, $capacity);
-            default:
-                throw new \Exception("Unsupported driver: {$driver}");
-        }
+        return new PersisterRedisImpl($this->getRedisConnection($connection), $capacity);
     }
 
     /**
-     * Get Redis connection instance with proper connection pooling
+     * Get the Redis connection, reusing it and only pinging when it has not
+     * been checked recently (a ping on every call costs a round trip).
      *
      * @param string $connectionName
      * @return \Redis
+     * @throws BloomPersistenceException
      */
     private function getRedisConnection(string $connectionName): \Redis
     {
-        if (isset(self::$redisInstances[$connectionName])) {
-            $redis = self::$redisInstances[$connectionName];
+        $entry = self::$redisInstances[$connectionName] ?? null;
+
+        if ($entry !== null) {
+            if (time() - $entry['checked'] < self::HEALTH_CHECK_SECONDS) {
+                return $entry['redis'];
+            }
+
             try {
-                if ($redis->ping() === true) {
-                    return $redis;
+                if ($entry['redis']->ping()) {
+                    self::$redisInstances[$connectionName]['checked'] = time();
+
+                    return $entry['redis'];
                 }
-            } catch (\Exception $e) {
-                unset(self::$redisInstances[$connectionName]);
+            } catch (\Throwable) {
+                // fall through and resolve a fresh connection
+            }
+
+            unset(self::$redisInstances[$connectionName]);
+        }
+
+        $redis = $this->extractRedis();
+
+        self::$redisInstances[$connectionName] = ['redis' => $redis, 'checked' => time()];
+
+        return $redis;
+    }
+
+    /**
+     * Read the phpredis client held by the default cache store.
+     *
+     * @return \Redis
+     * @throws BloomPersistenceException
+     */
+    private function extractRedis(): \Redis
+    {
+        $hint = ' Doppar Bloom stores its bits in the Redis connection of the default cache store: '
+            . 'set CACHE_DRIVER = "redis" and install the phpredis extension.';
+
+        try {
+            $adapter = Cache::getAdapter();
+        } catch (\Throwable $e) {
+            throw new BloomPersistenceException('Could not resolve the cache store.' . $hint, 0, $e);
+        }
+
+        // The client is a private property: look through the adapter's parents too.
+        for ($class = new \ReflectionClass($adapter); $class !== false; $class = $class->getParentClass()) {
+            if ($class->hasProperty('redis')) {
+                $property = $class->getProperty('redis');
+
+                if ($property->isInitialized($adapter) && $property->getValue($adapter) instanceof \Redis) {
+                    return $property->getValue($adapter);
+                }
             }
         }
 
-        $adapter = Cache::getAdapter();
-        $reflection = new \ReflectionClass($adapter);
-        $property = $reflection->getProperty('redis');
-        $property->setAccessible(true);
-        $redis = $property->getValue($adapter);
-
-        self::$redisInstances[$connectionName] = $redis;
-
-        return $redis;
+        throw new BloomPersistenceException(
+            'The default cache store (' . get_class($adapter) . ') does not use a phpredis connection.' . $hint
+        );
     }
 }

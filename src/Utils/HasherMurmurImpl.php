@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Doppar\Bloom\Utils;
 
-use Doppar\Bloom\Utils\Murmur;
 use Doppar\Bloom\Contracts\Hasher;
 
 class HasherMurmurImpl implements Hasher
@@ -14,7 +13,8 @@ class HasherMurmurImpl implements Hasher
      *
      * Steps:
      * 1. Build input string as "{seed}__{value}".
-     * 2. Apply MurmurHash3 to get an integer result.
+     * 2. Apply MurmurHash3 (32-bit, PHP's native implementation, which is
+     *    bit-for-bit identical to Utils\Murmur) to get a non-negative integer.
      *
      * @param int $seed  Seed value to diversify hashes.
      * @param string $value Input string to hash.
@@ -24,6 +24,6 @@ class HasherMurmurImpl implements Hasher
     {
         $input = sprintf("%d__%s", $seed, $value);
 
-        return Murmur::hash3_int($input);
+        return (int) hexdec(hash('murmur3a', $input));
     }
 }
